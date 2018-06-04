@@ -187,6 +187,26 @@ public final class LoanItem implements Cloneable, Serializable {
         }
     }
 
+    /**
+     * Return the string value of this in .csv format
+     * @return the string value of this in .csv format
+     */
+    public String toCsv() {
+        final String lSep = ";";
+        StringBuilder lBuilder = new StringBuilder();
+        Double lMensHorsAss = CalcLoanItem.computeMensHorsAss(this);
+        Double lMensAss = CalcLoanItem.computeMensAss(this);
+        Double lNotFee = CalcLoanItem.computeNotaryFee(this);
+        Double lTauxEff = CalcLoanItem.calcTauxEff(this);
+        lBuilder.append(this.getName()).append(lSep).append(this.getAmount()).append(lSep).append(this.getTaux())
+                .append(lSep).append(this.getMensualite()).append(lSep).append(lMensHorsAss.floatValue())
+                .append(lSep).append(lMensAss.floatValue()).append(lSep).append(this.getDuree()).append(lSep)
+                .append(this.getFrais()).append(lSep).append(this.getSalary()).append(lSep)
+                .append(this.getInsurance()).append(lSep).append(lNotFee.floatValue()).append(lSep)
+                .append(this.getLoanType()).append(lSep).append(lTauxEff.floatValue());
+        return lBuilder.toString();
+    }
+
 //getters and setters
     public Float getAmount() {
         return amount;

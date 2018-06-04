@@ -142,7 +142,7 @@ public class LoanModel implements Serializable {
         StringBuilder lBuilder = new StringBuilder();
         for (LoanItem lItem : data) {
             if (!isDiffed(lItem)) {
-                lBuilder.append(FrameUtils.toCsv(lItem)).append(lNewLine);
+                lBuilder.append(lItem.toCsv()).append(lNewLine);
             }
         }
         return lBuilder.toString();
