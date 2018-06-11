@@ -3,6 +3,8 @@
  */
 package loanmain;
 
+import com.google.common.eventbus.EventBus;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,17 +41,17 @@ public final class LoanItem implements Cloneable, Serializable {
         DUREE
     }
     /**
+     * The EventBus handling changes
+     */
+    private EventBus changePublisher = null;
+    /**
+     * The EventBus handling diffs
+     */
+    private EventBus diffPublisher = null;
+    /**
      * The item loan type
      */
     private LoanType type = LoanType.MENSUALITE;
-    /**
-     * List of components that are interested in item change events
-     */
-    private transient List<ChangeListener> changeListeners = null;
-    /**
-     * List of components that are interested in item diff events
-     */
-    private transient List<DiffListener> diffListeners = null;
     /**
      * Name of this loan item
      */
@@ -90,7 +92,8 @@ public final class LoanItem implements Cloneable, Serializable {
      * Default constructor
      */
     public LoanItem() {
-        changeListeners = new ArrayList<ChangeListener>();
+        changePublisher = new EventBus();
+        diffPublisher = new EventBus();
     }
 
     /**
@@ -113,79 +116,45 @@ public final class LoanItem implements Cloneable, Serializable {
         return lClone;
     }
 
-//Listeners
     /**
-     * Add a new listener
-     *
-     * @param pListener the new listener
+     * Return the string value of this in .csv format
+     * @return the string value of this in .csv format
      */
-    public void addChangeListener(final ChangeListener pListener) {
-        if (changeListeners == null) {
-            //This happens after a deserialization
-            changeListeners = new ArrayList<ChangeListener>();
-        }
-        if (!changeListeners.contains(pListener)) {
-            changeListeners.add(pListener);
-        }
+    public String toCsv() {
+        final String lSep = ";";
+        StringBuilder lBuilder = new StringBuilder();
+        Double lMensHorsAss = CalcLoanItem.computeMensHorsAss(this);
+        Double lMensAss = CalcLoanItem.computeMensAss(this);
+        Double lNotFee = CalcLoanItem.computeNotaryFee(this);
+        Double lTauxEff = CalcLoanItem.calcTauxEff(this);
+        lBuilder.append(this.getName()).append(lSep).append(this.getAmount()).append(lSep).append(this.getTaux())
+                .append(lSep).append(this.getMensualite()).append(lSep).append(lMensHorsAss.floatValue())
+                .append(lSep).append(lMensAss.floatValue()).append(lSep).append(this.getDuree()).append(lSep)
+                .append(this.getFrais()).append(lSep).append(this.getSalary()).append(lSep)
+                .append(this.getInsurance()).append(lSep).append(lNotFee.floatValue()).append(lSep)
+                .append(this.getLoanType()).append(lSep).append(lTauxEff.floatValue());
+        return lBuilder.toString();
     }
 
-    /**
-     * Remove a listener
-     *
-     * @param pListener the listener to remove from the list
-     */
-    public void removeChangeListener(final ChangeListener pListener) {
-        if (changeListeners.contains(pListener)) {
-            changeListeners.remove(pListener);
-        }
+    public void addChangeListener(final Object subscriber) {
+        changePublisher.register(subscriber);
     }
-
-    /**
-     * Aware the listeners that this item has changed
-     */
+    public void removeChangeListener(final Object subscriber) {
+        changePublisher.unregister(subscriber);
+    }
+    public void addDiffListener(final Object subscriber) {
+        diffPublisher.register(subscriber);
+    }
+    public void removeDiffListener(final Object subscriber) {
+        diffPublisher.unregister(subscriber);
+    }
     public void fireItemChanged() {
-        for (ChangeListener lListener : changeListeners) {
-            lListener.itemChanged(this);
-        }
+        changePublisher.post(new ChangeBus(this));
     }
-
-    /**
-     * Add a new listener
-     *
-     * @param pListener the new listener
-     */
-    public void addDiffListener(final DiffListener pListener) {
-        if (diffListeners == null) {
-            //This happens after a deserialization
-            diffListeners = new ArrayList<DiffListener>();
-        }
-        if (!diffListeners.contains(pListener)) {
-            diffListeners.add(pListener);
-        }
-    }
-
-    /**
-     * Remove a listener
-     *
-     * @param pListener the listener to remove from the list
-     */
-    public void removeDiffListener(final DiffListener pListener) {
-        if (diffListeners.contains(pListener)) {
-            diffListeners.remove(pListener);
-        }
-    }
-
-    /**
-     * Aware the listeners that this item is diffed
-     *
-     * @param pItem1 the first loan item
-     * @param pItem2 the second loan item
-     */
     public void fireItemDiffed(final LoanItem pItem1, final LoanItem pItem2) {
-        for (DiffListener lListener : diffListeners) {
-            lListener.itemDiffed(pItem1, pItem2);
-        }
+        diffPublisher.post(new DiffBus(pItem1, pItem2));
     }
+
 
 //getters and setters
     public Float getAmount() {

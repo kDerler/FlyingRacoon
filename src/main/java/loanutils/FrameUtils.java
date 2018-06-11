@@ -26,8 +26,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import loanmain.CalcLoanItem;
-import loanmain.LoanItem;
 import static loanutils.MyBundle.translate;
 
 /**
@@ -230,28 +228,6 @@ public abstract class FrameUtils {
             }
         }
         return null;
-    }
-
-    /**
-     * Return the string value of this in .csv format
-     *
-     * @param pItem the item loan
-     * @return the string value of this in .csv format
-     */
-    public static String toCsv(final LoanItem pItem) {
-        final String lSep = ";";
-        StringBuilder lBuilder = new StringBuilder();
-        Double lMensHorsAss = CalcLoanItem.computeMensHorsAss(pItem);
-        Double lMensAss = CalcLoanItem.computeMensAss(pItem);
-        Double lNotFee = CalcLoanItem.computeNotaryFee(pItem);
-        Double lTauxEff = CalcLoanItem.calcTauxEff(pItem);
-        lBuilder.append(pItem.getName()).append(lSep).append(pItem.getAmount()).append(lSep).append(pItem.getTaux())
-                .append(lSep).append(pItem.getMensualite()).append(lSep).append(lMensHorsAss.floatValue())
-                .append(lSep).append(lMensAss.floatValue()).append(lSep).append(pItem.getDuree()).append(lSep)
-                .append(pItem.getFrais()).append(lSep).append(pItem.getSalary()).append(lSep)
-                .append(pItem.getInsurance()).append(lSep).append(lNotFee.floatValue()).append(lSep)
-                .append(pItem.getLoanType()).append(lSep).append(lTauxEff.floatValue());
-        return lBuilder.toString();
     }
 
     /**

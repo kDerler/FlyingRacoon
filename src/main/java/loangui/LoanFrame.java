@@ -31,6 +31,8 @@ import javax.swing.JTabbedPane;
 import static javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import com.google.common.eventbus.EventBus;
 import loanmain.CalcLoanItem;
 import loanmain.LoanControler;
 import loanmain.LoanItem;
@@ -110,6 +112,11 @@ public class LoanFrame extends JFrame {
     public LoanFrame() {
         entryPanel = new EntryPanel(controler);
         optionPanel = new OptionPanel(controler);
+
+        EventBus eventBus = new EventBus();
+        controler.setEvtBus(eventBus);
+        eventBus.register(entryPanel);
+        eventBus.register(optionPanel);
         init();
     }
 
@@ -142,12 +149,11 @@ public class LoanFrame extends JFrame {
                     cloneBtn.getAction().setEnabled(!lIsDiffed);
                     simulBtn.getAction().setEnabled(!lIsDiffed);
                     controler.setDiffed(lIsDiffed);
-                    entryPanel.itemChanged(lItem);
-                    optionPanel.itemChanged(lItem);
+                    //Fire the changed event so it get updated.
+                    lItem.fireItemChanged();
                     if (lIsDiffed) {
-                        ((TabbedPanel) tabPane.getSelectedComponent()).itemDiffed(model.getFirst(lItem), model.getSecond(lItem));
-                    } else {
-                        ((TabbedPanel) tabPane.getSelectedComponent()).itemChanged(lItem);
+                        //Fire the diff event
+                        lItem.fireItemDiffed(model.getFirst(lItem), model.getSecond(lItem));
                     }
                 }
             }

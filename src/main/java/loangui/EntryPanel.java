@@ -13,7 +13,9 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import loanmain.ChangeListener;
+
+import com.google.common.eventbus.Subscribe;
+import loanmain.ChangeBus;
 import loanmain.LoanControler;
 import loanmain.LoanItem;
 import loanutils.FloatJTextField;
@@ -26,7 +28,7 @@ import static loanutils.MyBundle.translate;
  *
  * @author jean-blas imbert
  */
-public class EntryPanel extends JPanel implements ChangeListener {
+public class EntryPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
     /**
@@ -168,12 +170,16 @@ public class EntryPanel extends JPanel implements ChangeListener {
             {timCB, lTimLabel, timTF, new JLabel(translate("an"))}});
     }
 
+    @Subscribe
+    public void itemChanged(final ChangeBus evt){
+        itemChanged(evt.getLoanItem());
+    }
+
     /**
      * Fill the components with their respective values
      *
      * @param pItem the Loan item corresponding to this panel
      */
-    @Override
     public void itemChanged(final LoanItem pItem) {
         monTF.setText(FormatterFactory.fmtCurrencyNoSymbol(pItem.getMensualite()));
         tauTF.setText(FormatterFactory.fmtCurrencyNoSymbol(pItem.getTaux()));
