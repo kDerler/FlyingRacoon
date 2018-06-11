@@ -1,10 +1,8 @@
 /*
  * Main entry point
  */
-package loanmain;
+package loangui;
 
-import loangui.ChooseLanguageDialog;
-import loangui.LoanFrame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Locale;

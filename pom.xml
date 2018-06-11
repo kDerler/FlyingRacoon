@@ -28,7 +28,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>loanmain.JbiLoan</mainClass>
+              <mainClass>loangui.JbiLoan</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -47,7 +47,7 @@
           </execution>
         </executions>
         <configuration>
-          <mainClass>loanmain.JbiLoan</mainClass>
+          <mainClass>loangui.JbiLoan</mainClass>
         </configuration>
       </plugin>
     </plugins>

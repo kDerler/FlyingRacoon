@@ -11,6 +11,8 @@
  */
 package loanmain;
 
+import com.google.common.eventbus.EventBus;
+
 import static loanmain.LoanItem.LoanType.DUREE;
 
 /**
@@ -31,6 +33,10 @@ public class LoanControler {
      * The data model current item
      */
     private LoanItem item = null;
+    /**
+     * The EventBus used to update the item
+     */
+    private EventBus evtBus = null;
     /**
      * TRUE if the item is a diffed loan
      */
@@ -65,6 +71,13 @@ public class LoanControler {
         return mIsDiffed;
     }
 
+    public EventBus getEvtBus() {
+        return evtBus;
+    }
+
+    public void setEvtBus(EventBus evtBus) {
+        this.evtBus = evtBus;
+    }
     /**
      * Setter. Set the current item value according to the tabPane selected
      *

@@ -9,8 +9,10 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import com.google.common.eventbus.Subscribe;
 import loanmain.CalcLoanItem;
-import loanmain.ChangeListener;
+import loanmain.ChangeBus;
 import loanmain.LoanControler;
 import loanmain.LoanItem;
 import loanutils.FloatJTextField;
@@ -23,7 +25,7 @@ import static loanutils.MyBundle.translate;
  *
  * @author jean-blas imbert
  */
-public class OptionPanel extends JPanel implements ChangeListener {
+public class OptionPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
     /**
@@ -79,13 +81,16 @@ public class OptionPanel extends JPanel implements ChangeListener {
         salTF.addFocusListener(lFocusListener);
     }
 
-    
+    @Subscribe
+    public void itemCHanged(final ChangeBus evt){
+        itemChanged(evt.getLoanItem());
+    }
+
     /**
      * Fill the components with their respective values
      *
      * @param pItem the Loan item corresponding to this panel
      */
-    @Override
     public void itemChanged(final LoanItem pItem) {
         afeTF.setText(FormatterFactory.fmtCurrencyNoSymbol(pItem.getFrais()));
         assTF.setText(FormatterFactory.fmtCurrencyNoSymbol(pItem.getInsurance()));
