@@ -82,7 +82,7 @@ public class OptionPanel extends JPanel {
     }
 
     @Subscribe
-    public void itemCHanged(final ChangeBus evt){
+    public void itemChanged(final ChangeBus evt){
         itemChanged(evt.getLoanItem());
     }
 
